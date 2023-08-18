@@ -136,12 +136,7 @@ namespace DontTalkToMe
 					Widgets.DrawHighlightIfMouseover(left);
 					TooltipHandler.TipRegion(
 						left,
-						() => {
-							return "Source: {0}\nKey: {1}\nValue: {2}".Formatted(
-								config.Replacement.fileSource,
-								config.Replacement.key,
-								config.Value);
-						},
+						() => $"Source: {config.Replacement.fileSource}\nKey: {config.Replacement.key}\nValue: {config.Value}",
 						i);
 
 					string label = config.Value.Truncate(left.width, this._truncationCache);
