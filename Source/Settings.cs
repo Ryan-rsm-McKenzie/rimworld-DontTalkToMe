@@ -8,7 +8,7 @@ using Verse;
 
 namespace DontTalkToMe
 {
-  internal class Settings : ModSettings
+	internal class Settings : ModSettings
 	{
 		private StringTrieSet _blockedKeys = new StringTrieSet();
 

@@ -7,7 +7,7 @@ using Verse;
 
 namespace DontTalkToMe
 {
-  public class ModMain : Mod
+	public class ModMain : Mod
 	{
 		public static ModMain Mod = null;
 

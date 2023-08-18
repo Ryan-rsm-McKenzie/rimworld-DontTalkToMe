@@ -6,7 +6,7 @@ using Verse;
 
 namespace DontTalkToMe
 {
-  [HarmonyPatch(typeof(LetterStack))]
+	[HarmonyPatch(typeof(LetterStack))]
 	[HarmonyPatch("ReceiveLetter")]
 	[HarmonyPatch(new Type[] { typeof(Letter), typeof(string) })]
 	internal class LetterStack_ReceiveLetter
