@@ -8,6 +8,39 @@ using Verse;
 
 namespace DontTalkToMe
 {
+	internal static class FilterMethodExt
+	{
+		public static string ToLabel(this Settings.Window.FilterMethod method)
+		{
+			switch (method) {
+				default:
+				case Settings.Window.FilterMethod.Value:
+					return "By Value";
+				case Settings.Window.FilterMethod.Key:
+					return "By Key";
+				case Settings.Window.FilterMethod.Source:
+					return "By Source";
+				case Settings.Window.FilterMethod.Reset:
+					return "Reset".Translate();
+			}
+		}
+
+		public static string ToTooltip(this Settings.Window.FilterMethod method)
+		{
+			switch (method) {
+				default:
+				case Settings.Window.FilterMethod.Value:
+					return "Filter messages by their untranslated contents";
+				case Settings.Window.FilterMethod.Key:
+					return "Filter messages by their translation key";
+				case Settings.Window.FilterMethod.Source:
+					return "Filter messages by their file source";
+				case Settings.Window.FilterMethod.Reset:
+					return "Re-enable all currently disabled messages";
+			}
+		}
+	}
+
 	internal class Settings : ModSettings
 	{
 		private StringTrieSet _blockedKeys = new StringTrieSet();
@@ -48,13 +81,21 @@ namespace DontTalkToMe
 			return this._blockedKeys.Contains(key);
 		}
 
-		private class Window
+		internal class Window
 		{
 			public readonly List<ReplacementConfig> Config;
 
+			private readonly List<Widgets.DropdownMenuElement<FilterMethod>> _dropdownOptions = new List<Widgets.DropdownMenuElement<FilterMethod>>();
+
 			private readonly TextStyle _style = new TextStyle();
 
-			private List<ReplacementConfig> _filteredConfig;
+			private string _buttonText;
+
+			private List<ReplacementConfig> _filteredConfig = new List<ReplacementConfig>();
+
+			private FilterMethod _filterMethod = FilterMethod.Value;
+
+			private CheckboxWidget _reseter = null;
 
 			private Vector2 _scrollPos = default;
 
@@ -68,15 +109,32 @@ namespace DontTalkToMe
 									orderby val.key
 									select new ReplacementConfig(val, !blockedKeys.Contains(val.key));
 				this.Config = all.ToList();
-				this._filteredConfig = this.Config.Clone();
-				this._searcher.OnChanged = () => {
-					this._filteredConfig.Clear();
-					var filtered = from config in this.Config
-												 where this._searcher.Filter.Matches(config.Value)
-												 select config;
-					this._filteredConfig.AddRange(filtered);
-					this._searcher.NoMatches = this._filteredConfig.Count == 0;
-				};
+				this._searcher.OnChanged = () => this.OnFilterChanged();
+				this._dropdownOptions.AddRange(
+					Enum.GetValues(typeof(FilterMethod))
+							.Cast<FilterMethod>()
+							.Select((e) => {
+								return new Widgets.DropdownMenuElement<FilterMethod>() {
+									option = new FloatMenuOption(
+										label: e.ToLabel(),
+										action: () => { this._filterMethod = e; this.OnFilterChanged(); },
+										mouseoverGuiAction: (rect) => TooltipHandler.TipRegion(rect, () => e.ToTooltip(), (int)e)
+									),
+									payload = e,
+								};
+							}));
+				this.OnFilterChanged();
+			}
+
+			internal enum FilterMethod
+			{
+				Value,
+
+				Key,
+
+				Source,
+
+				Reset,
 			}
 
 			public void Draw(Rect inRect)
@@ -154,32 +212,95 @@ namespace DontTalkToMe
 				const int TooltipMarginTop = 2;
 				var canvas = manager.Allocate(Text.LineHeightOf(GameFont.Small) + Text.LineHeightOf(GameFont.Tiny) + TooltipMarginTop);
 
-				canvas.SplitVerticallyWithMargin(out var left, out var reset, out _, compressibleMargin: 4, rightWidth: 2 * canvas.height);
+				canvas.SplitVerticallyWithMargin(out var left, out var dropdown, out _, compressibleMargin: 4, rightWidth: 2 * canvas.height);
 				left.SplitHorizontallyWithMargin(out var searchbox, out var tooltip, out _, topHeight: Text.LineHeightOf(GameFont.Small));
 
 				Text.Font = GameFont.Small;
 				GUI.color = Color.white;
-				Widgets.BeginGroup(searchbox);
-				this._searcher.Draw(new Rect(default, searchbox.size));
+				Widgets.BeginGroup(dropdown);
+				Widgets.Dropdown(
+					new Rect(default, dropdown.size),
+					this,
+					(_) => this._filterMethod,
+					(_) => this._dropdownOptions,
+					this._filterMethod.ToLabel());
 				Widgets.EndGroup();
 
-				Text.Font = GameFont.Tiny;
-				GUI.color = new Color(1f, 1f, 1f, 0.6f);
-				tooltip.ShrinkTopEdge(TooltipMarginTop);
-				Widgets.BeginGroup(tooltip);
-				Widgets.Label(new Rect(default, tooltip.size), "Use the search bar to filter messages");
-				Widgets.EndGroup();
+				if (this._filterMethod == FilterMethod.Reset) {
+					const float Padding = 4f;
+					Text.Font = GameFont.Small;
+					GUI.color = Color.white;
 
-				Text.Font = GameFont.Small;
-				GUI.color = Color.white;
-				Widgets.BeginGroup(reset);
-				if (Widgets.ButtonText(new Rect(default, reset.size), "Reset".Translate())) {
-					foreach (var config in this.Config) {
-						config.Allowed = true;
+					string fullText = "Are you sure you want to reset all settings?";
+					string sizedText;
+					float leftWidth = Text.CalcSize(fullText).x;
+					if ((leftWidth + Padding + left.height) > left.width) {
+						leftWidth = left.width - Padding - left.height;
+						sizedText = fullText.Truncate(leftWidth, this._truncationCache);
+					} else {
+						sizedText = fullText;
 					}
-					Messages.Message("Reset mod specific settings to their defaults", MessageTypeDefOf.TaskCompletion, false);
+
+					searchbox.SplitVerticallyWithMargin(out var label, out var checkbox, out _, compressibleMargin: Padding, leftWidth: leftWidth);
+					Widgets.DrawHighlightIfMouseover(label);
+					Widgets.Label(label, sizedText);
+					TooltipHandler.TipRegion(label, () => fullText, 0);
+					this._reseter.Draw(checkbox);
+				} else {
+					Text.Font = GameFont.Small;
+					GUI.color = Color.white;
+					Widgets.BeginGroup(searchbox);
+					this._searcher.Draw(new Rect(default, searchbox.size));
+					Widgets.EndGroup();
+
+					Text.Font = GameFont.Tiny;
+					GUI.color = new Color(1f, 1f, 1f, 0.6f);
+					tooltip.ShrinkTopEdge(TooltipMarginTop);
+					Widgets.BeginGroup(tooltip);
+					Widgets.Label(new Rect(default, tooltip.size), "Use the search bar to filter messages");
+					Widgets.EndGroup();
 				}
-				Widgets.EndGroup();
+			}
+
+			private void OnFilterChanged()
+			{
+				Func<ReplacementConfig, bool> filter;
+				switch (this._filterMethod) {
+					default:
+					case FilterMethod.Value:
+						filter = (config) => this._searcher.Filter.Matches(config.Value);
+						break;
+					case FilterMethod.Key:
+						filter = (config) => this._searcher.Filter.Matches(config.Replacement.key);
+						break;
+					case FilterMethod.Source:
+						filter = (config) => this._searcher.Filter.Matches(config.Replacement.fileSource);
+						break;
+					case FilterMethod.Reset:
+						filter = (_) => false;
+						break;
+				}
+
+				if (this._filterMethod == FilterMethod.Reset) {
+					if (this._reseter == null) {
+						this._reseter = new CheckboxWidget(false);
+						this._reseter.OnChanged = () => {
+							if (this._reseter.Selected) {
+								foreach (var config in this.Config) {
+									config.Allowed = true;
+								}
+								Messages.Message("All disabled messages have been re-enabled", MessageTypeDefOf.TaskCompletion, false);
+							}
+						};
+					}
+				} else {
+					this._reseter = null;
+				}
+
+				this._buttonText = this._filterMethod.ToLabel();
+				this._filteredConfig.Clear();
+				this._filteredConfig.AddRange(this.Config.Where(filter));
+				this._searcher.NoMatches = this._filteredConfig.Count == 0;
 			}
 
 			internal class ReplacementConfig

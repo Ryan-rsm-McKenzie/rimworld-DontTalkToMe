@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckboxWidget.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="ModMain.cs" />
