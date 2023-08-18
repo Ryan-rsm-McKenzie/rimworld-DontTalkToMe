@@ -89,8 +89,6 @@ namespace DontTalkToMe
 
 			private readonly TextStyle _style = new TextStyle();
 
-			private string _buttonText;
-
 			private List<ReplacementConfig> _filteredConfig = new List<ReplacementConfig>();
 
 			private FilterMethod _filterMethod = FilterMethod.Value;
@@ -291,7 +289,6 @@ namespace DontTalkToMe
 					this._reseter = null;
 				}
 
-				this._buttonText = this._filterMethod.ToLabel();
 				this._filteredConfig.Clear();
 				this._filteredConfig.AddRange(this.Config.Where(filter));
 				this._searcher.NoMatches = this._filteredConfig.Count == 0;
