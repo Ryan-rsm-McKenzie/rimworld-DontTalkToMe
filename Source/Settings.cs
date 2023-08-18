@@ -15,11 +15,11 @@ namespace DontTalkToMe
 			switch (method) {
 				default:
 				case Settings.Window.FilterMethod.Value:
-					return "By Value";
+					return "DontTalkToMe.ValueLabel".Translate();
 				case Settings.Window.FilterMethod.Key:
-					return "By Key";
+					return "DontTalkToMe.KeyLabel".Translate();
 				case Settings.Window.FilterMethod.Source:
-					return "By Source";
+					return "DontTalkToMe.SourceLabel".Translate();
 				case Settings.Window.FilterMethod.Reset:
 					return "Reset".Translate();
 			}
@@ -30,13 +30,13 @@ namespace DontTalkToMe
 			switch (method) {
 				default:
 				case Settings.Window.FilterMethod.Value:
-					return "Filter messages by their untranslated contents";
+					return "DontTalkToMe.ValueTooltip".Translate();
 				case Settings.Window.FilterMethod.Key:
-					return "Filter messages by their translation key";
+					return "DontTalkToMe.KeyTooltip".Translate();
 				case Settings.Window.FilterMethod.Source:
-					return "Filter messages by their file source";
+					return "DontTalkToMe.SourceTooltip".Translate();
 				case Settings.Window.FilterMethod.Reset:
-					return "Re-enable all currently disabled messages";
+					return "DontTalkToMe.ResetTooltip".Translate();
 			}
 		}
 	}
@@ -192,7 +192,7 @@ namespace DontTalkToMe
 					Widgets.DrawHighlightIfMouseover(left);
 					TooltipHandler.TipRegion(
 						left,
-						() => $"Source: {config.Replacement.fileSource}\nKey: {config.Replacement.key}\nValue: {config.Value}",
+						() => "DontTalkToMe.ListItemTooltip".Translate(config.Replacement.fileSource, config.Replacement.key, config.Value),
 						i);
 
 					string label = config.Value.Truncate(left.width, this._truncationCache);
@@ -227,7 +227,7 @@ namespace DontTalkToMe
 					Text.Font = GameFont.Small;
 					GUI.color = Color.white;
 
-					string fullText = "Are you sure you want to reset all settings?";
+					string fullText = "DontTalkToMe.ResetConfirm".Translate();
 					string sizedText;
 					float leftWidth = Text.CalcSize(fullText).x;
 					if ((leftWidth + Padding + left.height) > left.width) {
@@ -250,7 +250,7 @@ namespace DontTalkToMe
 					Text.Font = GameFont.Tiny;
 					GUI.color = new Color(1f, 1f, 1f, 0.6f);
 					tooltip.ShrinkTopEdge(TooltipMarginTop);
-					Widgets.Label(tooltip, "Use the search bar to filter messages");
+					Widgets.Label(tooltip, "DontTalkToMe.SearchbarTooltip".Translate());
 				}
 			}
 
@@ -281,7 +281,7 @@ namespace DontTalkToMe
 								foreach (var config in this.Config) {
 									config.Allowed = true;
 								}
-								Messages.Message("All disabled messages have been re-enabled", MessageTypeDefOf.TaskCompletion, false);
+								Messages.Message("DontTalkToMe.ResetComplete".Translate(), MessageTypeDefOf.TaskCompletion, false);
 							}
 						};
 					}

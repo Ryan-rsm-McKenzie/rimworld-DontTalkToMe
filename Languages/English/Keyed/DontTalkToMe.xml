@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <DontTalkToMe.ValueLabel>By Value</DontTalkToMe.ValueLabel>
+  <DontTalkToMe.KeyLabel>By Key</DontTalkToMe.KeyLabel>
+  <DontTalkToMe.SourceLabel>By Source</DontTalkToMe.SourceLabel>
+
+  <DontTalkToMe.ValueTooltip>Filter messages by their untranslated contents</DontTalkToMe.ValueTooltip>
+  <DontTalkToMe.KeyTooltip>Filter messages by their translation key</DontTalkToMe.KeyTooltip>
+  <DontTalkToMe.SourceTooltip>Filter messages by their file source</DontTalkToMe.SourceTooltip>
+  <DontTalkToMe.ResetTooltip>Re-enable all currently disabled messages</DontTalkToMe.ResetTooltip>
+
+  <DontTalkToMe.ListItemTooltip>Source: {0}\nKey: {1}\nValue: {2}</DontTalkToMe.ListItemTooltip>
+  <DontTalkToMe.SearchbarTooltip>Use the search bar to filter messages</DontTalkToMe.SearchbarTooltip>
+
+  <DontTalkToMe.ResetConfirm>Are you sure you want to reset all settings?</DontTalkToMe.ResetConfirm>
+  <DontTalkToMe.ResetComplete>All disabled messages have been re-enabled</DontTalkToMe.ResetComplete>
+</LanguageData>
