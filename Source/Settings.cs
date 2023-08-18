@@ -217,14 +217,12 @@ namespace DontTalkToMe
 
 				Text.Font = GameFont.Small;
 				GUI.color = Color.white;
-				Widgets.BeginGroup(dropdown);
 				Widgets.Dropdown(
-					new Rect(default, dropdown.size),
+					dropdown,
 					this,
 					(_) => this._filterMethod,
 					(_) => this._dropdownOptions,
 					this._filterMethod.ToLabel());
-				Widgets.EndGroup();
 
 				if (this._filterMethod == FilterMethod.Reset) {
 					const float Padding = 4f;
@@ -249,16 +247,12 @@ namespace DontTalkToMe
 				} else {
 					Text.Font = GameFont.Small;
 					GUI.color = Color.white;
-					Widgets.BeginGroup(searchbox);
-					this._searcher.Draw(new Rect(default, searchbox.size));
-					Widgets.EndGroup();
+					this._searcher.Draw(searchbox);
 
 					Text.Font = GameFont.Tiny;
 					GUI.color = new Color(1f, 1f, 1f, 0.6f);
 					tooltip.ShrinkTopEdge(TooltipMarginTop);
-					Widgets.BeginGroup(tooltip);
-					Widgets.Label(new Rect(default, tooltip.size), "Use the search bar to filter messages");
-					Widgets.EndGroup();
+					Widgets.Label(tooltip, "Use the search bar to filter messages");
 				}
 			}
 
