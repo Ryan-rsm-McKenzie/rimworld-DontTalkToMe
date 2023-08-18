@@ -52,7 +52,7 @@ namespace DontTalkToMe
 		public void RerouteTranslation(string key, ref TaggedString result)
 		{
 			if (this._settings.ShouldBlockKey(key)) {
-				result = new TaggedString(this._canary);
+				result = new TaggedString($"{this._canary} {result.RawText}");
 			}
 		}
 
