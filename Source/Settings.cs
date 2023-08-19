@@ -95,7 +95,7 @@ namespace DontTalkToMe
 
 			private CheckboxWidget _reseter = null;
 
-			private Vector2 _scrollPos = default;
+			private ScrollPosition _scrollPos = default;
 
 			private SearchWidget _searcher = new SearchWidget();
 
@@ -162,9 +162,12 @@ namespace DontTalkToMe
 				var canvas = manager.Allocate();
 
 				var fullScrollRect = new Rect(0, 0, canvas.width - MarginBorder, this._style.Height * this._filteredConfig.Count);
-				Widgets.BeginScrollView(canvas, ref this._scrollPos, fullScrollRect, true);
+				float maxScrollable = fullScrollRect.height - canvas.height;
+				this._scrollPos.Absolute.y = Math.Max(0f, this._scrollPos.Relative * maxScrollable);
+				Widgets.BeginScrollView(canvas, ref this._scrollPos.Absolute, fullScrollRect, true);
+				this._scrollPos.Relative = this._scrollPos.Absolute.y / maxScrollable;
 
-				var visibleScrollRect = new Rect(this._scrollPos, new Vector2(fullScrollRect.width, canvas.height));
+				var visibleScrollRect = new Rect(this._scrollPos.Absolute, new Vector2(fullScrollRect.width, canvas.height));
 				var (offset, count) = GetVisibleRange(visibleScrollRect, this._style.Height);
 				count = Math.Min(this._filteredConfig.Count, count);
 
@@ -292,6 +295,13 @@ namespace DontTalkToMe
 				this._filteredConfig.Clear();
 				this._filteredConfig.AddRange(this.Config.Where(filter));
 				this._searcher.NoMatches = this._filteredConfig.Count == 0;
+			}
+
+			private struct ScrollPosition
+			{
+				public Vector2 Absolute;
+
+				public float Relative;
 			}
 
 			internal class ReplacementConfig
