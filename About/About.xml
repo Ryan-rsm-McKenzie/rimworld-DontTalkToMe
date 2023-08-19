@@ -7,6 +7,7 @@
   </supportedVersions>
   <packageId>Ryan.DontTalkToMe</packageId>
   <description>Suppress obnoxious letters and notifications</description>
+  <url>https://steamcommunity.com/workshop/filedetails/?id=3022307954</url>
   <modDependencies>
     <li>
       <packageId>brrainz.harmony</packageId>
