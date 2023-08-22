@@ -42,6 +42,13 @@ namespace DontTalkToMe
 				parameters.Add(typeof(NamedArgument));
 				patch(parameters);
 			}
+
+			this._harmony.Patch(
+				AccessTools.Method(
+					type: typeof(Translator),
+					name: "Translate",
+					parameters: new Type[] { typeof(string) }),
+				postfix: postfix);
 		}
 
 		public override void DoSettingsWindowContents(Rect inRect)
