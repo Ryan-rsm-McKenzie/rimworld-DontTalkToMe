@@ -155,13 +155,11 @@ namespace DontTalkToMe
 
 			private void DrawSearchResults(CanvasManager manager)
 			{
-				const float MarginBorder = 16f;
-
 				Text.Font = GameFont.Small;
 				GUI.color = Color.white;
 				var canvas = manager.Allocate();
 
-				var fullScrollRect = new Rect(0, 0, canvas.width - MarginBorder, this._style.Height * this._filteredConfig.Count);
+				var fullScrollRect = new Rect(0, 0, canvas.width - GenUI.ScrollBarWidth, this._style.Height * this._filteredConfig.Count);
 				float maxScrollable = fullScrollRect.height - canvas.height;
 				this._scrollPos.Absolute.y = Math.Max(0f, this._scrollPos.Relative * maxScrollable);
 				Widgets.BeginScrollView(canvas, ref this._scrollPos.Absolute, fullScrollRect, true);
@@ -189,7 +187,7 @@ namespace DontTalkToMe
 						y: this._style.MarginTop,
 						width: outer.width - this._style.MarginHorizontal,
 						height: this._style.ContentHeight);
-					inner.SplitVerticallyWithMargin(out var left, out var right, out _, compressibleMargin: 4, rightWidth: inner.height);
+					inner.SplitVerticallyWithMargin(out var left, out var right, out _, compressibleMargin: GenUI.GapTiny, rightWidth: inner.height);
 					var config = this._filteredConfig[i];
 
 					Widgets.DrawHighlightIfMouseover(left);
@@ -210,10 +208,10 @@ namespace DontTalkToMe
 
 			private void DrawTopBar(CanvasManager manager)
 			{
-				const int TooltipMarginTop = 2;
+				const float TooltipMarginTop = 2;
 				var canvas = manager.Allocate(Text.LineHeightOf(GameFont.Small) + Text.LineHeightOf(GameFont.Tiny) + TooltipMarginTop);
 
-				canvas.SplitVerticallyWithMargin(out var left, out var dropdown, out _, compressibleMargin: 4, rightWidth: 2 * canvas.height);
+				canvas.SplitVerticallyWithMargin(out var left, out var dropdown, out _, compressibleMargin: GenUI.GapTiny, rightWidth: 2 * canvas.height);
 				left.SplitHorizontallyWithMargin(out var searchbox, out var tooltip, out _, topHeight: Text.LineHeightOf(GameFont.Small));
 
 				Text.Font = GameFont.Small;
@@ -226,21 +224,20 @@ namespace DontTalkToMe
 					this._filterMethod.ToLabel());
 
 				if (this._filterMethod == FilterMethod.Reset) {
-					const float Padding = 4f;
 					Text.Font = GameFont.Small;
 					GUI.color = Color.white;
 
 					string fullText = "DontTalkToMe.ResetConfirm".Translate();
 					string sizedText;
 					float leftWidth = Text.CalcSize(fullText).x;
-					if ((leftWidth + Padding + left.height) > left.width) {
-						leftWidth = left.width - Padding - left.height;
+					if ((leftWidth + GenUI.GapTiny + left.height) > left.width) {
+						leftWidth = left.width - GenUI.GapTiny - left.height;
 						sizedText = fullText.Truncate(leftWidth, this._truncationCache);
 					} else {
 						sizedText = fullText;
 					}
 
-					searchbox.SplitVerticallyWithMargin(out var label, out var checkbox, out _, compressibleMargin: Padding, leftWidth: leftWidth);
+					searchbox.SplitVerticallyWithMargin(out var label, out var checkbox, out _, compressibleMargin: GenUI.GapTiny, leftWidth: leftWidth);
 					Widgets.DrawHighlightIfMouseover(label);
 					Widgets.Label(label, sizedText);
 					TooltipHandler.TipRegion(label, () => fullText, 0);
