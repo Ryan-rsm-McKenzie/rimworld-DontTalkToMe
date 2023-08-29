@@ -92,7 +92,7 @@ namespace DontTalkToMe
 		{
 			int pos = 1;
 			int cnd = 0;
-			int[] table = new int[word.Length];
+			int[] table = new int[word.Length + 1];
 
 			table[0] = -1;
 
