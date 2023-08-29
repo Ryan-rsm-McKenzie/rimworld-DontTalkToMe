@@ -70,7 +70,7 @@ namespace DontTalkToMe
 
 		public bool ShouldSuppressPopup(string text)
 		{
-			return text.Contains(this._canary);
+			return text.ContainsKMP(this._canary);
 		}
 	}
 }

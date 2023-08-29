@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KTrie;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -43,7 +42,7 @@ namespace DontTalkToMe
 
 	internal class Settings : ModSettings
 	{
-		private StringTrieSet _blockedKeys = new StringTrieSet();
+		private HashSet<string> _blockedKeys = new HashSet<string>();
 
 		private Window _window = null;
 
