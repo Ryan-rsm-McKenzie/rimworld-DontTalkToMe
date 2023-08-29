@@ -59,6 +59,8 @@ namespace DontTalkToMe
 		{
 			if (self.Length == 0) {
 				return word.Length == 0 ? 0 : -1;
+			} else if (word.Length == 0) {
+				return -1;
 			} else if (self.Length < word.Length) {
 				return -1;
 			}
