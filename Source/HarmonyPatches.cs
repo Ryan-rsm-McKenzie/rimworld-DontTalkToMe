@@ -1,4 +1,5 @@
 ﻿#pragma warning disable IDE1006 // Naming Styles
+#nullable enable
 
 using System;
 using HarmonyLib;
@@ -13,7 +14,7 @@ namespace DontTalkToMe
 	{
 		public static bool Prefix(Letter let)
 		{
-			return !ModMain.Mod.ShouldSuppressPopup(let.Label.RawText) || !let.CanDismissWithRightClick;
+			return !ModMain.Mod!.ShouldSuppressPopup(let.Label.RawText) || !let.CanDismissWithRightClick;
 		}
 	}
 
@@ -24,7 +25,7 @@ namespace DontTalkToMe
 	{
 		public static bool Prefix(string text)
 		{
-			return !ModMain.Mod.ShouldSuppressPopup(text);
+			return !ModMain.Mod!.ShouldSuppressPopup(text);
 		}
 	}
 
@@ -32,7 +33,7 @@ namespace DontTalkToMe
 	{
 		public static void Postfix(ref TaggedString __result, string key)
 		{
-			ModMain.Mod.RerouteTranslation(key, ref __result);
+			ModMain.Mod!.RerouteTranslation(key, ref __result);
 		}
 	}
 }

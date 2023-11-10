@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
@@ -44,7 +46,7 @@ namespace DontTalkToMe
 	{
 		private HashSet<string> _blockedKeys = new HashSet<string>();
 
-		private Window _window = null;
+		private Window? _window = null;
 
 		public void DoWindowContents(Rect canvas)
 		{
@@ -57,7 +59,7 @@ namespace DontTalkToMe
 
 		public override void ExposeData()
 		{
-			if (Scribe.mode == LoadSaveMode.Saving) {
+			if (Scribe.mode == LoadSaveMode.Saving && this._window is not null) {
 				// settings menu closed
 				this._blockedKeys.Clear();
 				var query = from config in this._window.Config
@@ -92,7 +94,7 @@ namespace DontTalkToMe
 
 			private FilterMethod _filterMethod = FilterMethod.Value;
 
-			private CheckboxWidget _reseter = null;
+			private CheckboxWidget? _reseter = null;
 
 			private ScrollPosition _scrollPos = default;
 
@@ -240,7 +242,7 @@ namespace DontTalkToMe
 					Widgets.DrawHighlightIfMouseover(label);
 					Widgets.Label(label, sizedText);
 					TooltipHandler.TipRegion(label, () => fullText, 0);
-					this._reseter.Draw(checkbox);
+					this._reseter!.Draw(checkbox);
 				} else {
 					Text.Font = GameFont.Small;
 					GUI.color = Color.white;
@@ -306,7 +308,7 @@ namespace DontTalkToMe
 
 				public bool Allowed;
 
-				private string _value = null;
+				private string? _value = null;
 
 				public ReplacementConfig(LoadedLanguage.KeyedReplacement replacement, bool allowed)
 				{

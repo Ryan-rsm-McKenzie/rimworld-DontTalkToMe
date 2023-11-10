@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
@@ -9,11 +11,11 @@ namespace DontTalkToMe
 {
 	public class ModMain : Mod
 	{
-		public static ModMain Mod = null;
+		public static ModMain? Mod = null;
 
 		private readonly string _canary;
 
-		private readonly Harmony _harmony = null;
+		private readonly Harmony? _harmony = null;
 
 		private readonly Settings _settings;
 

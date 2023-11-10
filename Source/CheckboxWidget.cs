@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using UnityEngine;
 using Verse;
 
@@ -8,7 +10,7 @@ namespace DontTalkToMe
 	{
 		public bool Disabled = false;
 
-		public Action OnChanged = null;
+		public Action? OnChanged = null;
 
 		public bool Paintable = false;
 

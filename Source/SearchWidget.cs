@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -6,13 +8,13 @@ using Verse.Sound;
 
 namespace DontTalkToMe
 {
-  internal class SearchWidget
+	internal class SearchWidget
 	{
 		public QuickSearchFilter Filter = new QuickSearchFilter();
 
 		public bool NoMatches = false;
 
-		public Action OnChanged = null;
+		public Action? OnChanged = null;
 
 		private static ulong s_instanceCounter = 0;
 
