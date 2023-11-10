@@ -23,17 +23,19 @@ namespace DontTalkToMe
 	[HarmonyPatch(new Type[] { typeof(string), typeof(LookTargets) })]
 	internal class Messages_AcceptsMessage
 	{
-		public static bool Prefix(string text)
+		public static bool Prefix(string? text)
 		{
-			return !ModMain.Mod!.ShouldSuppressPopup(text);
+			return text is null || !ModMain.Mod!.ShouldSuppressPopup(text);
 		}
 	}
 
 	internal class TranslatorFormattedStringExtensions_Translate
 	{
-		public static void Postfix(ref TaggedString __result, string key)
+		public static void Postfix(ref TaggedString __result, string? key)
 		{
-			ModMain.Mod!.RerouteTranslation(key, ref __result);
+			if (key is not null) {
+				ModMain.Mod!.RerouteTranslation(key, ref __result);
+			}
 		}
 	}
 }
