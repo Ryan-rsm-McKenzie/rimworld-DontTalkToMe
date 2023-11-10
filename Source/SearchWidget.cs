@@ -10,7 +10,7 @@ namespace DontTalkToMe
 {
 	internal class SearchWidget
 	{
-		public QuickSearchFilter Filter = new QuickSearchFilter();
+		public QuickSearchFilter Filter = new();
 
 		public bool NoMatches = false;
 

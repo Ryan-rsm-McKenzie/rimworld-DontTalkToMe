@@ -13,47 +13,34 @@ namespace DontTalkToMe
 	{
 		public static string ToLabel(this Settings.Window.FilterMethod method)
 		{
-			switch (method) {
-				default:
-				case Settings.Window.FilterMethod.Value:
-					return "DontTalkToMe.ValueLabel".Translate();
-				case Settings.Window.FilterMethod.Key:
-					return "DontTalkToMe.KeyLabel".Translate();
-				case Settings.Window.FilterMethod.Source:
-					return "DontTalkToMe.SourceLabel".Translate();
-				case Settings.Window.FilterMethod.Reset:
-					return "Reset".Translate();
-			}
+			return method switch {
+				Settings.Window.FilterMethod.Key => "DontTalkToMe.KeyLabel".Translate(),
+				Settings.Window.FilterMethod.Source => "DontTalkToMe.SourceLabel".Translate(),
+				Settings.Window.FilterMethod.Reset => "Reset".Translate(),
+				_ => "DontTalkToMe.ValueLabel".Translate(),
+			};
 		}
 
 		public static string ToTooltip(this Settings.Window.FilterMethod method)
 		{
-			switch (method) {
-				default:
-				case Settings.Window.FilterMethod.Value:
-					return "DontTalkToMe.ValueTooltip".Translate();
-				case Settings.Window.FilterMethod.Key:
-					return "DontTalkToMe.KeyTooltip".Translate();
-				case Settings.Window.FilterMethod.Source:
-					return "DontTalkToMe.SourceTooltip".Translate();
-				case Settings.Window.FilterMethod.Reset:
-					return "DontTalkToMe.ResetTooltip".Translate();
-			}
+			return method switch {
+				Settings.Window.FilterMethod.Key => "DontTalkToMe.KeyTooltip".Translate(),
+				Settings.Window.FilterMethod.Source => "DontTalkToMe.SourceTooltip".Translate(),
+				Settings.Window.FilterMethod.Reset => "DontTalkToMe.ResetTooltip".Translate(),
+				_ => "DontTalkToMe.ValueTooltip".Translate(),
+			};
 		}
 	}
 
 	internal class Settings : ModSettings
 	{
-		private HashSet<string> _blockedKeys = new HashSet<string>();
+		private readonly HashSet<string> _blockedKeys = new();
 
 		private Window? _window = null;
 
 		public void DoWindowContents(Rect canvas)
 		{
-			if (this._window == null) {
-				// settings menu opened
-				this._window = new Window(this._blockedKeys);
-			}
+			this._window ??= new Window(this._blockedKeys); // settings menu opened
 			this._window.Draw(canvas);
 		}
 
@@ -86,21 +73,21 @@ namespace DontTalkToMe
 		{
 			public readonly List<ReplacementConfig> Config;
 
-			private readonly List<Widgets.DropdownMenuElement<FilterMethod>> _dropdownOptions = new List<Widgets.DropdownMenuElement<FilterMethod>>();
+			private readonly List<Widgets.DropdownMenuElement<FilterMethod>> _dropdownOptions = new();
 
-			private readonly TextStyle _style = new TextStyle();
+			private readonly List<ReplacementConfig> _filteredConfig = new();
 
-			private List<ReplacementConfig> _filteredConfig = new List<ReplacementConfig>();
+			private readonly SearchWidget _searcher = new();
+
+			private readonly TextStyle _style = new();
+
+			private readonly Dictionary<string, string> _truncationCache = new();
 
 			private FilterMethod _filterMethod = FilterMethod.Value;
 
 			private CheckboxWidget? _reseter = null;
 
 			private ScrollPosition _scrollPos = default;
-
-			private SearchWidget _searcher = new SearchWidget();
-
-			private Dictionary<string, string> _truncationCache = new Dictionary<string, string>();
 
 			public Window(ICollection<string> blockedKeys)
 			{
@@ -257,22 +244,12 @@ namespace DontTalkToMe
 
 			private void OnFilterChanged()
 			{
-				Func<ReplacementConfig, bool> filter;
-				switch (this._filterMethod) {
-					default:
-					case FilterMethod.Value:
-						filter = (config) => this._searcher.Filter.Matches(config.Value);
-						break;
-					case FilterMethod.Key:
-						filter = (config) => this._searcher.Filter.Matches(config.Replacement.key);
-						break;
-					case FilterMethod.Source:
-						filter = (config) => this._searcher.Filter.Matches(config.Replacement.fileSource);
-						break;
-					case FilterMethod.Reset:
-						filter = (_) => false;
-						break;
-				}
+				Func<ReplacementConfig, bool> filter = this._filterMethod switch {
+					FilterMethod.Key => (config) => this._searcher.Filter.Matches(config.Replacement.key),
+					FilterMethod.Source => (config) => this._searcher.Filter.Matches(config.Replacement.fileSource),
+					FilterMethod.Reset => (_) => false,
+					_ => (config) => this._searcher.Filter.Matches(config.Value),
+				};
 
 				if (this._filterMethod == FilterMethod.Reset) {
 					if (this._reseter == null) {
@@ -318,9 +295,7 @@ namespace DontTalkToMe
 
 				public string Value {
 					get {
-						if (this._value == null) {
-							this._value = this.Replacement.value.StripTags();
-						}
+						this._value ??= this.Replacement.value.StripTags();
 						return this._value;
 					}
 				}

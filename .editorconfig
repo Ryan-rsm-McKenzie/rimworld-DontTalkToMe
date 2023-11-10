@@ -9,6 +9,24 @@ indent_size = 2
 # Dotnet code style settings:
 [*.{cs,vb}]
 
+dotnet_diagnostic.IDE0001.severity = error # Simplify name
+dotnet_diagnostic.IDE0002.severity = error # Simplify member access
+dotnet_diagnostic.IDE0039.severity = none # Use local function instead of lambda
+dotnet_diagnostic.IDE0042.severity = error # Deconstruct variable declaration
+dotnet_diagnostic.IDE0044.severity = error # Add readonly modifier
+dotnet_diagnostic.IDE0051.severity = error # Remove unused private member
+dotnet_diagnostic.IDE0052.severity = error # Remove unread private member
+dotnet_diagnostic.IDE0054.severity = error # Use compound assignment
+dotnet_diagnostic.IDE0059.severity = error # Remove unnecessary value assignment
+dotnet_diagnostic.IDE0060.severity = error # Remove unused parameter
+dotnet_diagnostic.IDE0063.severity = error # Use simple 'using' statement
+dotnet_diagnostic.IDE0066.severity = error # Use switch expression
+dotnet_diagnostic.IDE0083.severity = error # Use pattern matching (not operator)
+dotnet_diagnostic.IDE0090.severity = error # Simplify new expression
+dotnet_diagnostic.IDE0250.severity = error # Struct can be made 'readonly'
+dotnet_diagnostic.IDE0251.severity = error # Member can be made 'readonly'
+dotnet_diagnostic.IDE1005.severity = error # Use conditional delegate call
+
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
